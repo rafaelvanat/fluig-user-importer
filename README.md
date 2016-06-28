@@ -11,4 +11,4 @@ To use it you will need Eclipse or TDS with fluig plugin.
 -Add the widget in a page of your fluig (while browsing it with your chosen browser)
 
 Contributions accepted.
-Feel free to open issues and also pulling requests to solve them.
+Feel free to open issues and also pushing requests to solve them.
