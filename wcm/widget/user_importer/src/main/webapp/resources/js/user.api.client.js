@@ -1,11 +1,11 @@
 var USER_API = {
 	async:true,
-	setAsync: function(){
-		USER_API.async = false;
-		return USER_API;
+	setAsync: function(_async){
+		this.async = _async;
+		return this;
 	},
 	
-	createUser: function (userData, successCallback, failureCallback, parameterCallback) {
+	createUser: function (userData, successCallback, failCallback, parameterCallback) {
 		var _this = this;
 		var user = "";
 		if(userData){
@@ -25,7 +25,14 @@ var USER_API = {
 				fail: function(xhr, status, error){
 					user = xhr;
 					(failCallback) ?
-							failCallback(xhr, status, error, parameterCallback) :  console.error("failure");}
+							failCallback(xhr, status, error, parameterCallback) :  console.error("failure");},
+				statusCode:{
+				    500: function(err) {
+				    user = err.responseJSON.message.message;
+				     (failCallback) ?
+								failCallback(xhr, status, error, parameterCallback) :  console.error("failure");
+				    }
+				}
 			});
 		}
 		return user;

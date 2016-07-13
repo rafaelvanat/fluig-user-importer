@@ -1,11 +1,11 @@
 var GROUP_API = {
 	async:true,
-	setAsync: function(){
-		GROUP_API.async = false;
-		return GROUP_API;
+	setAsync: function(_async){
+		this.async = _async;
+		return this;
 	},
 	
-	/** TODO TEST
+	/** TODO TEST - Diz que houve sucesso porem, nada acontese. Exemplo grupo inexistente
 	 * Add list of user ids to group.
 	 * In case of async call, will @return void
 	 * If run sync @return the api result   
@@ -21,7 +21,7 @@ var GROUP_API = {
 		var result = "";
 		if(groupUsers){
 			result = this._request(
-					_url.replace('{groupCode}', groupUsers.groupCode())
+					_url.replace('{groupCode}', groupUsers.code())
 					, 'POST'
 					, groupUsers.userList()
 					, successCallback
@@ -65,7 +65,7 @@ var GROUP_API = {
 		return result;
 	},
 	
-	/**TODO TEST
+	/**TODO TEST - Servico esta lancando NPE, abrir chamado em nome de cliente?
 	 * Create a new Group.
 	 * In case of async call, will @return void
 	 * If run sync @return the api result   
@@ -108,7 +108,7 @@ var GROUP_API = {
 		if(groupUser){
 			result = this._request(
 					_url.replace('{genericId}', groupUser.genericId())
-						.replace('{pattern}', groupUser.pattern)
+						.replace('{pattern}', groupUser.pattern())
 					, 'GET'
 					, undefined
 					, successCallback
@@ -207,59 +207,59 @@ var GROUP_API = {
 			async: _this.async,
 			data: JSON.stringify(_data),
 			success:function(data, status, xhr){
-				result = (data.content) ? data.content : data;
+				result = (data.content) ? data.message.message : data;
 				(successCallback) ? 
 						successCallback(data, status, xhr, parameterCallback) : console.log("success");},
 			fail: function(xhr, status, error){
 				result = xhr;
 				(failCallback) ?
-						failCallback(xhr, status, error, parameterCallback) :  console.error("failure");}
+						failCallback(xhr, status, error, parameterCallback) :  console.error("failure");},
+			statusCode:{
+			    500: function(err) {
+			     result = err.responseJSON.message.message;
+			     (failCallback) ?
+							failCallback(xhr, status, error, parameterCallback) :  console.error("failure");
+			    }
+			}
 		});
 		return result;
 	},
 
 	_GroupVO: function(){
-		var code = "";
-		var description = "";
-		var isInternal = false;
-		var userList = [];
+		this.code = "";
+		this.description = "";
+		this.isInternal = false;
+		this.userList = [];
+		
 		
 		this.code = function(_code){
 			if(_code){
-				code = _code;
+				this.code = _code;
 				return this;
 			}
 			else{
 				return code;
 			}
-		}		
+		}	
 		this.description = function(_description){
 			if(_description){
-				description = _description;
+				this.description = _description;
 				return this;
 			}
 			else{
 				return description;
 			}
-		}
-		this.isInternal = function(_isInternal){
-			if(_isInternal){
-				isInternal = _isInternal;
-				return this;
-			}
-			else{
-				return isInternal;
-			}
-		}
+		}	
+		
 		this.userList = function(_userList){
 			if(_userList){
-				userList = _userList;
+				this.userList = _userList;
 				return this;
 			}
 			else{
 				return userList;
 			}
-		}
+		}	
 	},
 	GroupVO: function(){
 		return new GROUP_API._GroupVO();
@@ -271,7 +271,7 @@ var GROUP_API = {
 		var pattern = '';
 		
 		this.groupCode = function(_groupCode){
-			if(_groupCode){
+			if(_groupCode != undefined){
 				groupCode = _groupCode;
 				return this;
 			}
@@ -280,7 +280,7 @@ var GROUP_API = {
 			}
 		}
 		this.genericId = function(_genericId){
-			if(_genericId){
+			if(_genericId != undefined){
 				genericId = _genericId;
 				return this;
 			}
@@ -289,7 +289,7 @@ var GROUP_API = {
 			}
 		}
 		this.pattern = function(_pattern){
-			if(_pattern){
+			if(_pattern != undefined){
 				pattern = _pattern;
 				return this;
 			}
@@ -310,7 +310,7 @@ var GROUP_API = {
 		var pattern = '';
 		
 		this.orderby = function(_orderby){
-			if(_orderby){
+			if(_orderby != undefined){
 				orderby = _orderby;
 				return this;
 			}
@@ -319,7 +319,7 @@ var GROUP_API = {
 			}
 		}
 		this.limit = function(_limit){
-			if(_limit){
+			if(_limit != undefined){
 				limit = _limit;
 				return this;
 			}
@@ -328,7 +328,7 @@ var GROUP_API = {
 			}
 		}
 		this.offset = function(_offset){
-			if(_offset){
+			if(_offset != undefined){
 				offset = _offset;
 				return this;
 			}
@@ -337,7 +337,7 @@ var GROUP_API = {
 			}
 		}
 		this.pattern = function(_pattern){
-			if(_pattern){
+			if(_pattern != undefined){
 				pattern = _pattern;
 				return this;
 			}
